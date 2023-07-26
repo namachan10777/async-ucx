@@ -83,6 +83,8 @@ impl Context {
         #[cfg(feature = "am")]
         let features = features | ucp_feature::UCP_FEATURE_AM;
 
+        let params = MaybeUninit::uninit();
+
         #[allow(clippy::uninit_assumed_init)]
         let params = ucp_params_t {
             field_mask: (ucp_params_field::UCP_PARAM_FIELD_FEATURES
@@ -96,7 +98,7 @@ impl Context {
             request_init: Some(Request::init),
             request_cleanup: Some(Request::cleanup),
             mt_workers_shared: 1,
-            ..unsafe { MaybeUninit::uninit().assume_init() }
+            ..unsafe { params.assume_init() }
         };
         let mut handle = MaybeUninit::uninit();
         let status = unsafe {

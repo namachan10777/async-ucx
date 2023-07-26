@@ -30,11 +30,12 @@ unsafe impl Send for ConnectionRequest {}
 impl ConnectionRequest {
     /// The address of the remote client that sent the connection request to the server.
     pub fn remote_addr(&self) -> Result<SocketAddr, Error> {
+        let attr = MaybeUninit::uninit();
         #[allow(clippy::uninit_assumed_init)]
         let mut attr = ucp_conn_request_attr {
             field_mask: ucp_conn_request_attr_field::UCP_CONN_REQUEST_ATTR_FIELD_CLIENT_ADDR.0
                 as u64,
-            ..unsafe { MaybeUninit::uninit().assume_init() }
+            ..unsafe { attr.assume_init() }
         };
         let status = unsafe { ucp_conn_request_query(self.handle, &mut attr) };
         Error::from_status(status)?;
@@ -88,10 +89,11 @@ impl Listener {
 
     /// Returns the local socket address of this listener.
     pub fn socket_addr(&self) -> Result<SocketAddr, Error> {
+        let sockaddr = MaybeUninit::uninit();
         #[allow(clippy::uninit_assumed_init)]
         let mut attr = ucp_listener_attr_t {
             field_mask: ucp_listener_attr_field::UCP_LISTENER_ATTR_FIELD_SOCKADDR.0 as u64,
-            sockaddr: unsafe { MaybeUninit::uninit().assume_init() },
+            sockaddr: unsafe { sockaddr.assume_init() },
         };
         let status = unsafe { ucp_listener_query(self.handle, &mut attr) };
         Error::from_status(status)?;

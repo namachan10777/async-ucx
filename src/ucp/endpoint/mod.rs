@@ -147,8 +147,8 @@ impl Endpoint {
         let endpoint = Endpoint::create(worker, params)?;
 
         // Workaround for UCX bug: https://github.com/openucx/ucx/issues/6872
-        let buf = [0, 1, 2, 3];
-        endpoint.stream_send(&buf).await?;
+        //let buf = [0, 1, 2, 3];
+        //endpoint.stream_send(&buf).await?;
 
         Ok(endpoint)
     }
@@ -184,8 +184,8 @@ impl Endpoint {
         let endpoint = Endpoint::create(worker, params)?;
 
         // Workaround for UCX bug: https://github.com/openucx/ucx/issues/6872
-        let mut buf = [MaybeUninit::<u8>::uninit(); 4];
-        endpoint.stream_recv(buf.as_mut()).await?;
+        //let mut buf = [MaybeUninit::<u8>::uninit(); 4];
+        //endpoint.stream_recv(buf.as_mut()).await?;
 
         Ok(endpoint)
     }
