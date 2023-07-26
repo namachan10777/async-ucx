@@ -6,7 +6,7 @@ fn main() {
 
     for lib_dir in &ucx.link_paths {
         // Tell cargo to tell rustc to link the library.
-        println!("cargo:rustc-link-search=native={}/lib", lib_dir.to_str().unwrap());
+        println!("cargo:rustc-link-search=native={}", lib_dir.to_str().unwrap());
     }
     println!("cargo:rustc-link-lib=ucp");
     println!("cargo:rustc-link-lib=uct");
@@ -16,13 +16,11 @@ fn main() {
     // Tell cargo to invalidate the built crate whenever the wrapper changes
     println!("cargo:rerun-if-changed=wrapper.h");
 
-    let include_args = ucx.include_paths.iter().map(|inc_dir| format!("-I{}", inc_dir.to_str().unwrap())).collect::<Vec<_>>().join(" ");
-
     // The bindgen::Builder is the main entry point
     // to bindgen, and lets you build up options for
     // the resulting bindings.
     let bindings = bindgen::Builder::default()
-        .clang_arg(include_args)
+        .clang_args(ucx.include_paths.iter().map(|inc_dir| format!("-I{}", inc_dir.to_string_lossy())))
         // The input header we would like to generate bindings for.
         .header("wrapper.h")
         // Tell cargo to invalidate the built crate whenever any of the
