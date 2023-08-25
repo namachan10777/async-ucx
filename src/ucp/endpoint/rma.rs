@@ -45,7 +45,7 @@ impl MemoryHandle {
         assert_eq!(status, ucs_status_t::UCS_OK);
         RKeyBuffer {
             buf: unsafe { buf.assume_init() },
-            len: unsafe { len.assume_init() },
+            len: unsafe { len.assume_init() as u64 },
         }
     }
 }
