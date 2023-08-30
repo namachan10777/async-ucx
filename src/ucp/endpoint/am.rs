@@ -192,7 +192,7 @@ impl<'a> AmMsg<'a> {
             unsafe extern "C" fn callback(
                 request: *mut c_void,
                 status: ucs_status_t,
-                _length: u64,
+                _length: usize,
                 _data: *mut c_void,
             ) {
                 // todo: handle error & fix real data length
@@ -383,9 +383,9 @@ impl Worker {
         unsafe extern "C" fn callback(
             arg: *mut c_void,
             header: *const c_void,
-            header_len: u64,
+            header_len: usize,
             data: *mut c_void,
-            data_len: u64,
+            data_len: usize,
             param: *const ucp_am_recv_param_t,
         ) -> ucs_status_t {
             let handler = &*(arg as *const AmStreamInner);

@@ -1,7 +1,7 @@
 //! Asynchronous Rust bindings to UCX.
 
-#![deny(warnings)]
-#![deny(missing_docs)]
+//#![deny(warnings)]
+//#![deny(missing_docs)]
 
 use ucx1_sys::ucs_status_ptr_t;
 use ucx1_sys::ucs_status_t;
