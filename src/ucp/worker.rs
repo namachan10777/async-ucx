@@ -118,8 +118,8 @@ impl Worker {
     }
 
     /// Connect to a remote worker by address.
-    pub fn connect_addr(self: &Rc<Self>, addr: &WorkerAddress) -> Result<Endpoint, Error> {
-        Endpoint::connect_addr(self, addr.handle)
+    pub fn connect_addr<A: WorkerAddressRef>(self: &Rc<Self>, addr: &A) -> Result<Endpoint, Error> {
+        Endpoint::connect_addr(self, addr.as_address_ptr())
     }
 
     /// Connect to a remote listener.
@@ -194,5 +194,29 @@ impl<'a> AsRef<[u8]> for WorkerAddress<'a> {
 impl<'a> Drop for WorkerAddress<'a> {
     fn drop(&mut self) {
         unsafe { ucp_worker_release_address(self.worker.handle, self.handle) }
+    }
+}
+
+pub struct ExternalWorkerAddress(Vec<u8>);
+
+impl ExternalWorkerAddress {
+    pub unsafe fn new(addr: Vec<u8>) -> Self {
+        Self(addr)
+    }
+}
+
+pub trait WorkerAddressRef {
+    fn as_address_ptr(&self) -> *const ucp_address_t;
+}
+
+impl WorkerAddressRef for ExternalWorkerAddress {
+    fn as_address_ptr(&self) -> *const ucp_address_t {
+        self.0.as_ptr() as _
+    }
+}
+
+impl WorkerAddressRef for WorkerAddress<'_> {
+    fn as_address_ptr(&self) -> *const ucp_address_t {
+        self.handle
     }
 }
